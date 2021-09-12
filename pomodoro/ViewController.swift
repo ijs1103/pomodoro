@@ -24,6 +24,8 @@ class ViewController: UIViewController {
 
   var duration = 60
   var timerStatus: TimerStatus = .end
+  var currentSeconds = 0
+  var timer: DispatchSourceTimer?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -38,6 +40,7 @@ class ViewController: UIViewController {
       self.setTimerInfoViewVisible(isHidden: true)
       self.datePicker.isHidden = false
       self.toggleButton.isSelected = false
+      self.stopTimer()
 
     default:
       break
@@ -48,19 +51,23 @@ class ViewController: UIViewController {
     self.duration = Int(self.datePicker.countDownDuration)
     switch self.timerStatus {
     case .end:
+      self.currentSeconds = duration
       self.timerStatus = .start
       self.setTimerInfoViewVisible(isHidden: false)
       self.datePicker.isHidden = true
       self.toggleButton.isSelected = true
       self.cancelButton.isEnabled = true
+      self.startTimer()
 
     case .start:
       self.timerStatus = .pause
       self.toggleButton.isSelected = false
+      self.timer?.suspend()
 
     case .pause:
       self.timerStatus = .start
       self.toggleButton.isSelected = true
+      self.timer?.resume()
     }
   }
 
@@ -72,6 +79,26 @@ class ViewController: UIViewController {
   func setTimerInfoViewVisible(isHidden: Bool) {
     self.timerLabel.isHidden = isHidden
     self.progressView.isHidden = isHidden
+  }
+
+  func startTimer() {
+    if self.timer == nil {
+      self.timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
+      self.timer?.schedule(deadline: .now(), repeating: 1)
+      self.timer?.setEventHandler(handler: { [weak self] in
+        self?.currentSeconds -= 1
+        debugPrint("\(self?.currentSeconds)")
+        if self?.currentSeconds ?? 0 <= 0 {
+          self?.stopTimer()
+        }
+      })
+      self.timer?.resume()
+    }
+  }
+
+  func stopTimer() {
+    self.timer?.cancel()
+    self.timer = nil
   }
 }
 
