@@ -16,6 +16,8 @@ class ViewController: UIViewController {
   @IBOutlet weak var cancelButton: UIButton!
   @IBOutlet weak var toggleButton: UIButton!
 
+  var duration = 60
+
   override func viewDidLoad() {
     super.viewDidLoad()
   }
@@ -24,6 +26,8 @@ class ViewController: UIViewController {
   }
 
   @IBAction func tapToggleButton(_ sender: UIButton) {
+    self.duration = Int(self.datePicker.countDownDuration)
+    debugPrint("\(self.duration)")
   }
 }
 
