@@ -20,6 +20,7 @@ class ViewController: UIViewController {
   @IBOutlet weak var progressView: UIProgressView!
   @IBOutlet weak var datePicker: UIDatePicker!
 
+  @IBOutlet weak var imageView: UIImageView!
   @IBOutlet weak var cancelButton: UIButton!
   @IBOutlet weak var toggleButton: UIButton!
 
@@ -49,8 +50,11 @@ class ViewController: UIViewController {
     case .end:
       self.currentSeconds = duration
       self.timerStatus = .start
-      self.setTimerInfoViewVisible(isHidden: false)
-      self.datePicker.isHidden = true
+      UIView.animate(withDuration: 0.5, animations: {
+        self.timerLabel.alpha = 1
+        self.progressView.alpha = 1
+        self.datePicker.alpha = 0
+      })
       self.toggleButton.isSelected = true
       self.cancelButton.isEnabled = true
       self.startTimer()
@@ -70,11 +74,6 @@ class ViewController: UIViewController {
   func configureToggleButton() {
     self.toggleButton.setTitle("시작", for: .normal)
     self.toggleButton.setTitle("일시정지", for: .selected)
-  }
-
-  func setTimerInfoViewVisible(isHidden: Bool) {
-    self.timerLabel.isHidden = isHidden
-    self.progressView.isHidden = isHidden
   }
 
   func startTimer() {
@@ -105,8 +104,12 @@ class ViewController: UIViewController {
     }
     self.timerStatus = .end
     self.cancelButton.isEnabled = false
-    self.setTimerInfoViewVisible(isHidden: true)
-    self.datePicker.isHidden = false
+
+    UIView.animate(withDuration: 0.5, animations: {
+      self.timerLabel.alpha = 0
+      self.progressView.alpha = 0
+      self.datePicker.alpha = 1
+    })
     self.toggleButton.isSelected = false
     self.timer?.cancel()
     self.timer = nil
