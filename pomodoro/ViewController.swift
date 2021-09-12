@@ -92,6 +92,9 @@ class ViewController: UIViewController {
   }
 
   func stopTimer() {
+    if self.timerStatus == .pause {
+      self.timer?.resume()
+    }
     self.timerStatus = .end
     self.cancelButton.isEnabled = false
     self.setTimerInfoViewVisible(isHidden: true)
